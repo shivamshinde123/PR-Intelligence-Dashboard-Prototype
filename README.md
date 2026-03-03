@@ -133,12 +133,28 @@ Large PRs are automatically truncated to stay within LLM token limits while pres
 
 **What it measures:** The probability that the code in the PR was **AI‑generated** (e.g., by Copilot, ChatGPT, Cursor, etc.).
 
-**Signals Claude looks for:**
-- **Overly uniform formatting** — AI tends to produce consistently styled code without the natural variation of human developers  
+This uses a **two‑layer approach**:
+
+#### Layer 1 — Git Co‑Author Detection (Heuristic)
+
+Before calling the LLM, the backend scans commit data for hard evidence of AI involvement:
+
+- **`Co-authored-by:` trailers** — e.g., `Co-authored-by: GitHub Copilot`, `Co-authored-by: Cursor`  
+- **Known AI committer emails** — `copilot@github.com`, bot `noreply` addresses  
+- **Bot committer names** — names matching `[bot]`, `copilot`, `cursor`  
+
+If any signal is detected, the confidence floor is raised to **0.6** regardless of what the LLM says — because git metadata is harder evidence than stylistic guessing.
+
+#### Layer 2 — LLM Stylistic Analysis
+
+Claude also evaluates the diff for softer signals:
+
+- **Overly uniform formatting** — AI produces consistently styled code without human variation  
 - **Verbose boilerplate comments** — lines like `// Initialize the variable` that add no value  
-- **Structural tells** — repetitive patterns, cookie‑cutter test structures, exhaustive but shallow implementations  
-- **Naming conventions** — AI often picks very conventional, "textbook" names  
-- **Lack of reviewer‑specific patterns** — absence of team conventions or in‑jokes that humans naturally embed  
+- **Structural tells** — repetitive patterns, cookie‑cutter test structures  
+- **Naming conventions** — overly conventional, "textbook" variable/function names  
+
+The two layers are combined: git signals provide the **evidence floor**, and LLM analysis can push confidence **higher** based on stylistic patterns.
 
 | Confidence | Interpretation |
 |:----------:|---------------|
@@ -367,13 +383,13 @@ PR Intelligence Dashboard Prototype/
 | **LLM variability** | Claude's scores may vary slightly between runs (temperature is set to 0 to minimize this) |
 | **Rate limits** | Without a `GITHUB_TOKEN`, GitHub allows only 60 requests/hour |
 | **Linter scope** | The AI rules linter only checks `.cursor/rules` and `CLAUDE.md` — other rule systems are not yet supported |
-| **No caching** | Each analysis makes fresh API calls — repeated analyses of the same PR are not cached |
+| **In‑memory cache only** | Results are cached in a Python dict — cache is lost on server restart (consider Redis for production) |
 
 ---
 
 ## 🗺️ Future Improvements
 
-- [ ] Add result caching (Redis / in‑memory) to avoid redundant API calls  
+- [x] ~~Add result caching (Redis / in‑memory) to avoid redundant API calls~~ — ✅ in‑memory cache implemented  
 - [ ] Support private repositories via OAuth flow  
 - [ ] Historical trend tracking — compare scores across PRs in the same repo  
 - [ ] Batch analysis — analyze all open PRs in a repo at once  

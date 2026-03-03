@@ -26,8 +26,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ---------------------------------------------------------------------------
+# In-memory cache keyed by normalized PR URL (owner/repo/number)
+# Avoids redundant GitHub + Claude API calls for the same PR.
+# ---------------------------------------------------------------------------
+_cache: dict[str, dict] = {}
+
+
+def _cache_key(owner: str, repo: str, number: int) -> str:
+    return f"{owner}/{repo}/{number}".lower()
+
+
 class AnalysisRequest(BaseModel):
     pr_url: HttpUrl
+
 
 class AnalysisResponse(BaseModel):
     complexity_score: float
@@ -38,6 +50,7 @@ class AnalysisResponse(BaseModel):
     linter_issues: list
     reasoning: str
 
+
 @app.post("/api/analyze-pr", response_model=AnalysisResponse)
 async def analyze_pr_endpoint(request: AnalysisRequest):
     # 1. Parse owner, repo, number from URL
@@ -46,7 +59,12 @@ async def analyze_pr_endpoint(request: AnalysisRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid PR URL: {e}")
 
-    # 2. Fetch PR data from GitHub
+    # 2. Check cache
+    key = _cache_key(owner, repo, number)
+    if key in _cache:
+        return _cache[key]
+
+    # 3. Fetch PR data from GitHub
     try:
         pr_data = await get_pr_details(owner, repo, number)
     except Exception as e:
@@ -55,7 +73,7 @@ async def analyze_pr_endpoint(request: AnalysisRequest):
             detail=f"Failed to fetch PR data from GitHub: {e}",
         )
 
-    # 3. Run LLM analysis
+    # 4. Run LLM analysis
     try:
         result = await analyze_pr(pr_data)
     except RuntimeError as e:
@@ -66,17 +84,20 @@ async def analyze_pr_endpoint(request: AnalysisRequest):
             detail=f"LLM analysis failed: {e}",
         )
 
-    # 4. Run AI rules linter on changed files
+    # 5. Run AI rules linter on changed files
     try:
-        linter_issues = await lint_ai_rules(pr_data.get("files", []))
+        linter_issues = await lint_ai_rules(pr_data.get("files", []), owner=owner, repo=repo)
     except Exception:
         linter_issues = []
 
-    # 5. Merge linter results into the analysis dict
+    # 6. Merge linter results into the analysis dict
     if isinstance(result, dict):
         result["linter_issues"] = linter_issues
     else:
         result = result.dict()
         result["linter_issues"] = linter_issues
+
+    # 7. Store in cache
+    _cache[key] = result
 
     return result
