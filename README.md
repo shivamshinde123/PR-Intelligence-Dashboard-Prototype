@@ -5,6 +5,14 @@ Enter a public GitHub PR URL and instantly receive a structured intelligence rep
 
 ---
 
+## 🎬 Demo
+
+[![Watch the demo](https://img.youtube.com/vi/wOD8QgsMXU4/maxresdefault.jpg)](https://youtu.be/wOD8QgsMXU4)
+
+> 🎥 **Click the image above** to watch the full demo on YouTube.
+
+---
+
 ## ✨ Features
 
 - **Complexity Score & Expert Hours** — LLM‑estimated effort for each PR  
@@ -284,19 +292,27 @@ npm install
 
 ## 🚀 Running
 
-Start both servers in separate terminals:
+Start both servers in **separate terminals**:
+
+### Backend
 
 ```bash
-# Terminal 1 — Backend (auto‑reload enabled)
 cd backend
 uvicorn main:app --reload
-# → Running on http://127.0.0.1:8000
+```
 
-# Terminal 2 — Frontend (Vite dev server with API proxy)
+The API server starts at **http://127.0.0.1:8000**.  
+The `--reload` flag enables auto‑restart on code changes.
+
+### Frontend
+
+```bash
 cd frontend
 npm run dev
-# → Running on http://localhost:5173
 ```
+
+The Vite dev server starts at **http://localhost:5173**.  
+API requests are automatically proxied to the backend via `vite.config.js`.
 
 Open **http://localhost:5173** in your browser, paste any public GitHub PR URL, and watch the dashboard populate.
 
