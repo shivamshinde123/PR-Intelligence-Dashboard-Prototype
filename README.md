@@ -7,7 +7,7 @@ Enter a public GitHub PR URL and instantly receive a structured intelligence rep
 
 ## 🎬 Demo
 
-[![Watch the demo](https://img.youtube.com/vi/XyUMtroqY-E/maxresdefault.jpg)](https://youtube.com/shorts/XyUMtroqY-E?feature=share)
+[![Watch the demo](https://img.youtube.com/vi/S-Ez6QgID54/maxresdefault.jpg)](https://youtube.com/shorts/S-Ez6QgID54?si=5lUYpv7hnMaJ7VyM)
 
 > 🎥 **Click the image above** to watch the demo on YouTube.
 
