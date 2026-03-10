@@ -7,7 +7,9 @@ Enter a public GitHub PR URL and instantly receive a structured intelligence rep
 
 ## 🎬 Demo
 
-📂 [`Weave YC Demo.mp4`](./Weave%20YC%20Demo.mp4)
+[![Watch the demo](https://img.youtube.com/vi/XyUMtroqY-E/maxresdefault.jpg)](https://youtube.com/shorts/XyUMtroqY-E?feature=share)
+
+> 🎥 **Click the image above** to watch the demo on YouTube.
 
 ---
 
