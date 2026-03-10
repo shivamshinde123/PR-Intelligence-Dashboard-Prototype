@@ -7,9 +7,20 @@ Enter a public GitHub PR URL and instantly receive a structured intelligence rep
 
 ## 🎬 Demo
 
-[![Watch the demo](https://img.youtube.com/vi/wOD8QgsMXU4/maxresdefault.jpg)](https://youtu.be/wOD8QgsMXU4)
+📂 [`Weave YC Demo.mp4`](./Weave%20YC%20Demo.mp4)
 
-> 🎥 **Click the image above** to watch the full demo on YouTube.
+---
+
+## 🏗️ Architecture
+
+![PR Intelligence Dashboard — Architecture](./PR_Analyzer_Architecture.png)
+
+The diagram above illustrates the end‑to‑end data flow:  
+1. **User** pastes a GitHub PR URL into the **React Frontend**  
+2. The frontend sends a `POST /api/analyze-pr` request to the **FastAPI Backend**  
+3. The backend fetches PR data (diff, commits, files, reviews) from the **GitHub REST API**  
+4. Truncated PR data is forwarded to **Claude LLM** for scoring, while AI rule files are validated by the **Rules Linter**  
+5. The combined **structured JSON output** (complexity, expert hours, work type, AI attribution, review quality, linter issues) is rendered on the **Dashboard UI**
 
 ---
 
