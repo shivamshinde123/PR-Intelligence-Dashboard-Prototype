@@ -3,6 +3,10 @@
 A sleek, single‑page dashboard that analyzes GitHub Pull Requests using LLM‑powered intelligence.  
 Enter a public GitHub PR URL and instantly receive a structured intelligence report covering complexity, effort estimation, AI attribution, review quality, and more.
 
+## Detailed Documentation
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/shivamshinde123/PR-Intelligence-Dashboard-Prototype)
+
 ---
 
 ## 🎬 Demo
